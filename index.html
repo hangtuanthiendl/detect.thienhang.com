@@ -1,1 +1,163 @@
-Hello.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Device Detector</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .device-card {
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .device-label {
+      font-weight: bold;
+      color: #555;
+    }
+    .device-value {
+      color: #222;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+  <h3 class="mb-4 text-center">🌐 Device Detection Demo</h3>
+
+  <!-- 1. Hiển thị user-agent -->
+  <div class="alert alert-secondary">
+    <strong>Current User-Agent:</strong> <span id="currentUA"></span>
+  </div>
+
+  <div class="row">
+    <!-- Bên trái: tra cứu -->
+    <div class="col-md-5">
+      <div class="card p-3 mb-3">
+        <h5>🔍 Device Lookup</h5>
+        <div class="mb-3">
+          <label for="uaInput" class="form-label">User-Agent String</label>
+          <textarea id="uaInput" class="form-control" rows="4"></textarea>
+        </div>
+        <button class="btn btn-primary w-100" onclick="detectDevice()">Detect Device</button>
+      </div>
+
+      <div class="card p-3">
+        <input type="text" class="form-control mb-3" placeholder="Search history..." id="searchBox">
+        <ul class="list-group" id="historyList">
+          <!-- Add past lookups here -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bên phải: Card info -->
+    <div class="col-md-7">
+      <div class="card p-4 device-card" id="deviceInfoCard" style="display: none;">
+        <h5 class="mb-3">📱 Detected Device Info</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="device-label">Browser:</div>
+            <div class="device-value" id="browser"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Operating System:</div>
+            <div class="device-value" id="os"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Platform:</div>
+            <div class="device-value" id="pf"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Device Type:</div>
+            <div class="device-value" id="dt"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Browser Language:</div>
+            <div class="device-value" id="bl"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Manufacturer:</div>
+            <div class="device-value" id="dm"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Model:</div>
+            <div class="device-value" id="dm2"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">HW Version:</div>
+            <div class="device-value" id="dhv"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Bandwidth:</div>
+            <div class="device-value" id="b"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Carrier:</div>
+            <div class="device-value" id="mc"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">OS Family:</div>
+            <div class="device-value" id="of"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="device-label">Processed:</div>
+            <div class="device-value" id="p"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+  // Gán user-agent mặc định
+  const currentUA = navigator.userAgent;
+  document.getElementById("currentUA").textContent = currentUA;
+  document.getElementById("uaInput").value = currentUA;
+
+  // Hàm mô phỏng API detect (thay bằng call thực tế nếu có)
+  function detectDevice() {
+    const ua = document.getElementById("uaInput").value;
+
+    // Giả lập response từ API theo model ContainerDevice
+    const mockResponse = {
+      browser: 101,
+      operating_system: 203,
+      platform: 1,
+      device_type: 2,
+      browser_language: navigator.language || "en-US",
+      device_manufacturer: "Apple",
+      device_model: "MacBook Pro",
+      device_hardware_version: "M1",
+      bandwidth: 100,
+      mobile_carrier: "N/A",
+      os_family: "macOS",
+      processed: true
+    };
+
+    // Gán lên UI
+    for (const [key, val] of Object.entries(mockResponse)) {
+      const el = document.getElementById(key === "operating_system" ? "os" : key === "device_type" ? "dt" : key === "device_model" ? "dm2" : key === "device_manufacturer" ? "dm" : key);
+      if (el) el.textContent = val;
+    }
+
+    document.getElementById("deviceInfoCard").style.display = "block";
+
+    // Thêm vào history
+    const li = document.createElement("li");
+    li.className = "list-group-item small";
+    li.textContent = ua.slice(0, 50) + (ua.length > 50 ? "..." : "");
+    document.getElementById("historyList").prepend(li);
+  }
+
+  // Tìm kiếm trong danh sách
+  document.getElementById("searchBox").addEventListener("input", function () {
+    const filter = this.value.toLowerCase();
+    const items = document.querySelectorAll("#historyList li");
+    items.forEach(item => {
+      item.style.display = item.textContent.toLowerCase().includes(filter) ? "" : "none";
+    });
+  });
+</script>
+</body>
+</html>
